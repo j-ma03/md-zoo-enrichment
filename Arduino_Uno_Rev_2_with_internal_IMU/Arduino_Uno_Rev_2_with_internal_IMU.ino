@@ -9,8 +9,21 @@ File dataFile;
 void setup() {
 
   Serial.begin(1000000); // Initialize serial communication
-  SD.begin(chipSelect); //pin 10
-  dataFile = SD.open("ZooData.txt",FILE_WRITE);
+  // SD.begin(chipSelect); //pin 10
+  // dataFile = SD.open("ZooData.txt",FILE_WRITE);
+
+  if (!SD.begin(chipSelect)) { // Initialize SD card
+    Serial.println("SD card initialization failed!");
+    while (1); // Stop if SD initialization fails
+  }
+
+  // Open the file in write mode to overwrite and immediately close it
+  dataFile = SD.open("ZOODATA.txt", O_WRITE | O_CREAT | O_TRUNC);
+  if (dataFile) {
+    dataFile.close(); // Close it to overwrite content
+  } else {
+    Serial.println("Error creating ZOODATA.txt!");
+  }
 
   if (!IMU.begin()) { // Initialize IMU
 
@@ -40,19 +53,23 @@ void loop() {
     // Write data to the SD card
     dataFile = SD.open("ZOODATA.txt", FILE_WRITE); // Open file in append mode
     if (dataFile) {
-      dataFile.print("Acc X: "); dataFile.print(ax);
-      dataFile.print(", Acc Y: "); dataFile.print(ay);
-      dataFile.print(", Acc Z: "); dataFile.println(az);
+      dataFile.print(ax);
+      dataFile.print(" ");
+      dataFile.print(ay);
+      dataFile.print(" ");
+      dataFile.println(az);
       dataFile.close(); // Close the file to save data
     } else {
-      Serial.println("Error opening ZooData.txt!");
+      Serial.println("Error opening ZOODATA.txt!");
     }
 
-    Serial.print("Acc X: "); Serial.print(ax); 
+    Serial.print(ax); 
+    Serial.print(" ");
 
-    Serial.print(", Acc Y: "); Serial.print(ay); 
+    Serial.print(ay); 
+    Serial.print(" ");
 
-    Serial.print(", Acc Z: "); Serial.println(az);
+    Serial.println(az);
 
 
 
