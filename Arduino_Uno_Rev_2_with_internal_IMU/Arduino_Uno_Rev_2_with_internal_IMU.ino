@@ -9,8 +9,8 @@ File dataFile;
 void setup() {
 
   Serial.begin(1000000); // Initialize serial communication
-  // SD.begin(chipSelect); //pin 10
-  // dataFile = SD.open("ZooData.txt",FILE_WRITE);
+  SD.begin(chipSelect); //pin 10
+  dataFile = SD.open("ZooData.txt",FILE_WRITE);
 
   if (!SD.begin(chipSelect)) { // Initialize SD card
     Serial.println("SD card initialization failed!");
