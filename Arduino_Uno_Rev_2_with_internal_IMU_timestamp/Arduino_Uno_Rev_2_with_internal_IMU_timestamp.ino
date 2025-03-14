@@ -11,8 +11,8 @@ RTC_DS3231 rtc;
 void setup() {
 
   Serial.begin(9600); // Initialize serial communication
-  // SD.begin(chipSelect); //pin 10
-  // dataFile = SD.open("ZooData.txt",FILE_WRITE);
+  SD.begin(chipSelect); //pin 10
+  dataFile = SD.open("ZooData.txt",FILE_WRITE);
 
   // Initialize SD card
   if (!SD.begin(chipSelect)) { 
