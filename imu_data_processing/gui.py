@@ -37,7 +37,7 @@ class IMUDataVisualizerApp:
         self.file_frame.pack(side=tk.LEFT, fill=tk.X, expand=True)
         
         # Add open button on the very left
-        self.open_button = tk.Button(self.file_frame, text="Open IMU Data File", command=self.open_file_with_progress)
+        self.open_button = tk.Button(self.file_frame, text="Open Raw Data File", command=self.open_file_with_progress)
         self.open_button.pack(side=tk.LEFT, padx=5)
         
         # Add file label immediately to the right of the button
@@ -64,7 +64,7 @@ class IMUDataVisualizerApp:
         self.save_processed_button.pack(side=tk.LEFT, padx=5)
         
         # Save raw data button
-        self.save_raw_button = tk.Button(self.action_frame, text="Save Raw Data", 
+        self.save_raw_button = tk.Button(self.action_frame, text="Save Raw Data as CSV", 
                                       command=self.save_raw_data, state=tk.DISABLED)
         self.save_raw_button.pack(side=tk.LEFT, padx=5)
         
@@ -94,7 +94,7 @@ class IMUDataVisualizerApp:
         
         # Add a status bar
         self.status_var = tk.StringVar()
-        self.status_var.set("Ready to load IMU data")
+        self.status_var.set("Ready to load raw data")
         self.status_bar = tk.Label(root, textvariable=self.status_var, bd=1, relief=tk.SUNKEN, anchor=tk.W)
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
         
@@ -110,7 +110,7 @@ class IMUDataVisualizerApp:
     def show_instructions(self):
         # Create a new window for instructions
         instructions_window = tk.Toplevel(self.root)
-        instructions_window.title("IMU Data Visualizer - Instructions")
+        instructions_window.title("Enrichment Tracking Data Processor - Instructions")
         instructions_window.geometry("600x500")
         instructions_window.transient(self.root)  # Set as transient to main window
         
@@ -131,12 +131,12 @@ class IMUDataVisualizerApp:
         
         # Add instructions text
         instructions = """
-IMU Data Visualizer - User Instructions
+Enrichment Tracking Data Processor - User Instructions
 
-This application helps you analyze and visualize IMU (Inertial Measurement Unit) data.
+This application helps you analyze and visualize data collected from the enrichment tracking device.
 
 Basic Steps:
-1. Open an IMU data file using the 'Open IMU Data File' button
+1. Open an IMU data file using the 'Open Raw Data File' button
 2. View the raw data visualization
 3. Process the data using the 'Process Data' button
 4. Switch between raw and processed data views using the radio buttons
@@ -145,7 +145,7 @@ Basic Steps:
 Detailed Instructions:
 
 LOADING DATA:
-- Click the 'Open IMU Data File' button to select and load your IMU data file
+- Click the 'Open Raw Data File' button to select and load your IMU data file
 - Supported formats include .txt and .csv files
 - The file name will appear next to the button once loaded
 - Raw data visualization will be displayed automatically
@@ -170,7 +170,6 @@ TIPS:
 - Use the menu bar's File > Exit option to close the application
 - The status bar at the bottom shows the current state of the application
 
-For more information or assistance, please contact technical support.
         """
         
         text_widget.insert(tk.END, instructions)
@@ -209,14 +208,14 @@ For more information or assistance, please contact technical support.
                 self.file_label.config(text=os.path.basename(file_path))
                 
                 # Update window title
-                self.root.title(f"IMU Data Visualizer - {os.path.basename(file_path)}")
+                self.root.title(f"Enrichment Tracking Data Processor - {os.path.basename(file_path)}")
                 
                 # Enable buttons
                 self.process_button.config(state=tk.NORMAL)
                 self.save_raw_button.config(state=tk.NORMAL)
                 self.raw_radio.config(state=tk.NORMAL)
                 
-                self.status_var.set(f"Data loaded successfully. Showing IMU data averages from {os.path.basename(file_path)}")
+                self.status_var.set(f"Data loaded successfully. Showing raw data from {os.path.basename(file_path)}")
                 
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to load or process file: {str(e)}")
@@ -229,7 +228,7 @@ For more information or assistance, please contact technical support.
         
         if file_path:
             # Create and show progress dialog for file loading
-            self.create_progress_dialog("Loading Data", "Loading IMU data file...")
+            self.create_progress_dialog("Loading Data", "Loading raw data file...")
             
             # Start file loading in a separate thread
             threading.Thread(target=lambda: self.load_file_thread(file_path), daemon=True).start()
@@ -270,14 +269,14 @@ For more information or assistance, please contact technical support.
         self.file_label.config(text=os.path.basename(file_path))
         
         # Update window title
-        self.root.title(f"IMU Data Visualizer - {os.path.basename(file_path)}")
+        self.root.title(f"Enrichment Tracking Data Processor - {os.path.basename(file_path)}")
         
         # Enable buttons
         self.process_button.config(state=tk.NORMAL)
         self.save_raw_button.config(state=tk.NORMAL)
         self.raw_radio.config(state=tk.NORMAL)
         
-        self.status_var.set(f"Data loaded successfully. Showing IMU data averages from {os.path.basename(file_path)}")
+        self.status_var.set(f"Data loaded successfully. Showing raw data from {os.path.basename(file_path)}")
         
         # Show success message
         messagebox.showinfo("File Loaded", f"Data loaded successfully from {os.path.basename(file_path)}")
@@ -318,7 +317,7 @@ For more information or assistance, please contact technical support.
     
     def process_data_with_progress(self):
         if self.zoodata_dl is None:
-            messagebox.showwarning("Warning", "No data loaded. Please open an IMU data file first.")
+            messagebox.showwarning("Warning", "No data loaded. Please open a data file first.")
             return
         
         # Create and show progress dialog
@@ -368,7 +367,7 @@ For more information or assistance, please contact technical support.
     
     def save_raw_data(self):
         if self.imu_data is None:
-            messagebox.showwarning("Warning", "No data loaded. Please open an IMU data file first.")
+            messagebox.showwarning("Warning", "No data loaded. Please open a data file first.")
             return
             
         # Ask for output directory
@@ -415,7 +414,7 @@ For more information or assistance, please contact technical support.
             self.ax.plot(range(len(self.imu_data_avg)), self.imu_data_avg)
             self.ax.set_xlabel('Time (ms)')
             self.ax.set_ylabel('Acceleration (m/s^2)')
-            self.ax.set_title('Raw Acceleration Data')
+            self.ax.set_title('Raw Enrichment Device Tracker Data')
             self.ax.grid(True)
             
             # Update canvas
