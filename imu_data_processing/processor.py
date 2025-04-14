@@ -16,7 +16,7 @@ class Processor:
         # self.data_name = data_name
         self.result_with_counts = None
     
-    def process_imu_data(self):
+    def process_imu_data(self, threshold):
         imu_data = np.array(self.zoodata_dl.raw_data)
         imu_data_avg = []
 
@@ -42,7 +42,7 @@ class Processor:
         print(result.shape)
 
         # Define threshold for significant acceleration
-        threshold = 0.5
+        threshold = threshold
 
         # Get time data (year, month, day, hour) and acceleration data
         time_data = imu_data[:, :6]  # Time data (year, month, day, hour, minute, second)
