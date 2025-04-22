@@ -69,20 +69,25 @@ class IMUDataVisualizerApp:
         self.time_range_frame = tk.Frame(root)
         self.time_range_frame.pack(fill=tk.X, padx=10, pady=5)
         
-        # Start and end time labels
-        self.start_time_label = tk.Label(self.time_range_frame, text="Start Time: Not available")
-        self.start_time_label.pack(side=tk.LEFT, padx=5)
+        # Create a frame to hold both custom time sections vertically
+        self.custom_time_frame = tk.Frame(self.time_range_frame)
+        self.custom_time_frame.pack(side=tk.LEFT, padx=(5, 5))
         
-        self.end_time_label = tk.Label(self.time_range_frame, text="End Time: Not available")
-        self.end_time_label.pack(side=tk.LEFT, padx=5)
+        # Create a frame for start time row (includes label and controls)
+        self.start_time_row = tk.Frame(self.custom_time_frame)
+        self.start_time_row.pack(side=tk.TOP, fill=tk.X, pady=(0, 10))
         
-        # Custom start time section
-        self.custom_start_label = tk.Label(self.time_range_frame, text="Custom Start:")
-        self.custom_start_label.pack(side=tk.LEFT, padx=(20, 5))
+        # Start time label (now on same line as custom start)
+        self.start_time_label = tk.Label(self.start_time_row, text="Start Time: Not available", width=30, anchor=tk.W)
+        self.start_time_label.pack(side=tk.LEFT, padx=(0, 10))
+        
+        # Custom start time section 
+        self.custom_start_label = tk.Label(self.start_time_row, text="Custom Start:")
+        self.custom_start_label.pack(side=tk.LEFT, padx=(10, 5))
         
         # Create frame to hold the start time dropdowns
-        self.start_time_frame = tk.Frame(self.time_range_frame)
-        self.start_time_frame.pack(side=tk.LEFT, padx=5)
+        self.start_time_frame = tk.Frame(self.start_time_row)
+        self.start_time_frame.pack(side=tk.LEFT)
         
         # Create variables for start time dropdown values
         self.start_year_var = tk.StringVar()
@@ -90,7 +95,6 @@ class IMUDataVisualizerApp:
         self.start_day_var = tk.StringVar()
         self.start_hour_var = tk.StringVar()
         self.start_minute_var = tk.StringVar()
-        self.start_second_var = tk.StringVar()
         
         # Create dropdown menus for start time
         self.start_year_dropdown = ttk.Combobox(self.start_time_frame, textvariable=self.start_year_var, width=5)
@@ -98,44 +102,45 @@ class IMUDataVisualizerApp:
         self.start_day_dropdown = ttk.Combobox(self.start_time_frame, textvariable=self.start_day_var, width=3)
         self.start_hour_dropdown = ttk.Combobox(self.start_time_frame, textvariable=self.start_hour_var, width=3)
         self.start_minute_dropdown = ttk.Combobox(self.start_time_frame, textvariable=self.start_minute_var, width=3)
-        self.start_second_dropdown = ttk.Combobox(self.start_time_frame, textvariable=self.start_second_var, width=3)
         
-        # Set up values for dropdowns
-        years = [str(year) for year in range(2000, 2031)]
+        # Set up values for dropdowns - initial empty year values (will be populated when data is loaded)
         months = [f"{month:02d}" for month in range(1, 13)]
         days = [f"{day:02d}" for day in range(1, 32)]
         hours = [f"{hour:02d}" for hour in range(24)]
         minutes = [f"{minute:02d}" for minute in range(60)]
-        seconds = [f"{second:02d}" for second in range(60)]
         
-        self.start_year_dropdown['values'] = years
         self.start_month_dropdown['values'] = months
         self.start_day_dropdown['values'] = days
         self.start_hour_dropdown['values'] = hours
         self.start_minute_dropdown['values'] = minutes
-        self.start_second_dropdown['values'] = seconds
         
         # Pack the start time dropdowns with labels
-        tk.Label(self.start_time_frame, text="Y:").pack(side=tk.LEFT)
+        tk.Label(self.start_time_frame, text="Year:").pack(side=tk.LEFT)
         self.start_year_dropdown.pack(side=tk.LEFT, padx=(0, 2))
-        tk.Label(self.start_time_frame, text="M:").pack(side=tk.LEFT)
+        tk.Label(self.start_time_frame, text="Month:").pack(side=tk.LEFT)
         self.start_month_dropdown.pack(side=tk.LEFT, padx=(0, 2))
-        tk.Label(self.start_time_frame, text="D:").pack(side=tk.LEFT)
+        tk.Label(self.start_time_frame, text="Day:").pack(side=tk.LEFT)
         self.start_day_dropdown.pack(side=tk.LEFT, padx=(0, 2))
-        tk.Label(self.start_time_frame, text="H:").pack(side=tk.LEFT)
+        tk.Label(self.start_time_frame, text="Hour:").pack(side=tk.LEFT)
         self.start_hour_dropdown.pack(side=tk.LEFT, padx=(0, 2))
-        tk.Label(self.start_time_frame, text="M:").pack(side=tk.LEFT)
-        self.start_minute_dropdown.pack(side=tk.LEFT, padx=(0, 2))
-        tk.Label(self.start_time_frame, text="S:").pack(side=tk.LEFT)
-        self.start_second_dropdown.pack(side=tk.LEFT)
+        tk.Label(self.start_time_frame, text="Minute:").pack(side=tk.LEFT)
+        self.start_minute_dropdown.pack(side=tk.LEFT)
+        
+        # Create a frame for end time row (includes label and controls)
+        self.end_time_row = tk.Frame(self.custom_time_frame)
+        self.end_time_row.pack(side=tk.TOP, fill=tk.X)
+        
+        # End time label (now on same line as custom end)
+        self.end_time_label = tk.Label(self.end_time_row, text="End Time: Not available", width=30, anchor=tk.W)
+        self.end_time_label.pack(side=tk.LEFT, padx=(0, 10))
         
         # Custom end time section
-        self.custom_end_label = tk.Label(self.time_range_frame, text="Custom End:")
+        self.custom_end_label = tk.Label(self.end_time_row, text="Custom End:")
         self.custom_end_label.pack(side=tk.LEFT, padx=(10, 5))
         
         # Create frame to hold the end time dropdowns
-        self.end_time_frame = tk.Frame(self.time_range_frame)
-        self.end_time_frame.pack(side=tk.LEFT, padx=5)
+        self.end_time_frame = tk.Frame(self.end_time_row)
+        self.end_time_frame.pack(side=tk.LEFT)
         
         # Create variables for end time dropdown values
         self.end_year_var = tk.StringVar()
@@ -143,7 +148,6 @@ class IMUDataVisualizerApp:
         self.end_day_var = tk.StringVar()
         self.end_hour_var = tk.StringVar()
         self.end_minute_var = tk.StringVar()
-        self.end_second_var = tk.StringVar()
         
         # Create dropdown menus for end time
         self.end_year_dropdown = ttk.Combobox(self.end_time_frame, textvariable=self.end_year_var, width=5)
@@ -151,34 +155,29 @@ class IMUDataVisualizerApp:
         self.end_day_dropdown = ttk.Combobox(self.end_time_frame, textvariable=self.end_day_var, width=3)
         self.end_hour_dropdown = ttk.Combobox(self.end_time_frame, textvariable=self.end_hour_var, width=3)
         self.end_minute_dropdown = ttk.Combobox(self.end_time_frame, textvariable=self.end_minute_var, width=3)
-        self.end_second_dropdown = ttk.Combobox(self.end_time_frame, textvariable=self.end_second_var, width=3)
         
         # Set up values for end time dropdowns (reusing the same values)
-        self.end_year_dropdown['values'] = years
         self.end_month_dropdown['values'] = months
         self.end_day_dropdown['values'] = days
         self.end_hour_dropdown['values'] = hours
         self.end_minute_dropdown['values'] = minutes
-        self.end_second_dropdown['values'] = seconds
         
         # Pack the end time dropdowns with labels
-        tk.Label(self.end_time_frame, text="Y:").pack(side=tk.LEFT)
+        tk.Label(self.end_time_frame, text="Year:").pack(side=tk.LEFT)
         self.end_year_dropdown.pack(side=tk.LEFT, padx=(0, 2))
-        tk.Label(self.end_time_frame, text="M:").pack(side=tk.LEFT)
+        tk.Label(self.end_time_frame, text="Month:").pack(side=tk.LEFT)
         self.end_month_dropdown.pack(side=tk.LEFT, padx=(0, 2))
-        tk.Label(self.end_time_frame, text="D:").pack(side=tk.LEFT)
+        tk.Label(self.end_time_frame, text="Day:").pack(side=tk.LEFT)
         self.end_day_dropdown.pack(side=tk.LEFT, padx=(0, 2))
-        tk.Label(self.end_time_frame, text="H:").pack(side=tk.LEFT)
+        tk.Label(self.end_time_frame, text="Hour:").pack(side=tk.LEFT)
         self.end_hour_dropdown.pack(side=tk.LEFT, padx=(0, 2))
-        tk.Label(self.end_time_frame, text="M:").pack(side=tk.LEFT)
-        self.end_minute_dropdown.pack(side=tk.LEFT, padx=(0, 2))
-        tk.Label(self.end_time_frame, text="S:").pack(side=tk.LEFT)
-        self.end_second_dropdown.pack(side=tk.LEFT)
+        tk.Label(self.end_time_frame, text="Minute:").pack(side=tk.LEFT)
+        self.end_minute_dropdown.pack(side=tk.LEFT)
         
-        # Update time range button
-        self.update_range_button = tk.Button(self.time_range_frame, text="Update Time Range", 
+        # Update time range button (now immediately to the right of end time section)
+        self.update_range_button = tk.Button(self.end_time_row, text="Update Time Range", 
                                          command=self.update_time_range, state=tk.DISABLED)
-        self.update_range_button.pack(side=tk.LEFT, padx=10)
+        self.update_range_button.pack(side=tk.LEFT, padx=(15, 0))
         
         # Create frame for action buttons
         self.action_frame = tk.Frame(root)
@@ -419,34 +418,40 @@ TIPS:
             self.start_time = self.zoodata_dl.get_first_timestamp()
             self.end_time = self.zoodata_dl.get_last_timestamp()
             
-            # Update the labels
+            # Update the labels - removed seconds from display
             self.start_time_label.config(text=f"Start Time: {int(self.start_time[0])}/{int(self.start_time[1]):02d}/"
-                                               f"{int(self.start_time[2]):02d} {int(self.start_time[3]):02d}:{int(self.start_time[4]):02d}:{int(self.start_time[5]):02d}")
+                                               f"{int(self.start_time[2]):02d} {int(self.start_time[3]):02d}:{int(self.start_time[4]):02d}")
             self.end_time_label.config(text=f"End Time: {int(self.end_time[0])}/{int(self.end_time[1]):02d}/"
-                                             f"{int(self.end_time[2]):02d} {int(self.end_time[3]):02d}:{int(self.end_time[4]):02d}:{int(self.end_time[5]):02d}")
+                                             f"{int(self.end_time[2]):02d} {int(self.end_time[3]):02d}:{int(self.end_time[4]):02d}")
             
-            # Set initial values for the dropdown menus
+            # Generate year range based on start year from data
+            start_year = int(self.start_time[0])
+            years = [str(year) for year in range(start_year, start_year + 11)]  # Start year to start year + 10
+            
+            # Update year dropdown values for both start and end time
+            self.start_year_dropdown['values'] = years
+            self.end_year_dropdown['values'] = years
+            
+            # Set initial values for the dropdown menus - no seconds
             self.start_year_var.set(str(int(self.start_time[0])))
             self.start_month_var.set(f"{int(self.start_time[1]):02d}")
             self.start_day_var.set(f"{int(self.start_time[2]):02d}")
             self.start_hour_var.set(f"{int(self.start_time[3]):02d}")
             self.start_minute_var.set(f"{int(self.start_time[4]):02d}")
-            self.start_second_var.set(f"{int(self.start_time[5]):02d}")
             
             self.end_year_var.set(str(int(self.end_time[0])))
             self.end_month_var.set(f"{int(self.end_time[1]):02d}")
             self.end_day_var.set(f"{int(self.end_time[2]):02d}")
             self.end_hour_var.set(f"{int(self.end_time[3]):02d}")
             self.end_minute_var.set(f"{int(self.end_time[4]):02d}")
-            self.end_second_var.set(f"{int(self.end_time[5]):02d}")
     
     def validate_time_range(self, custom_start_parts, custom_end_parts):
         """
         Validate that the custom time range is within the original data bounds.
         
         Args:
-            custom_start_parts: List of start time components [year, month, day, hour, min, sec]
-            custom_end_parts: List of end time components [year, month, day, hour, min, sec]
+            custom_start_parts: List of start time components [year, month, day, hour, min]
+            custom_end_parts: List of end time components [year, month, day, hour, min]
             
         Returns:
             Tuple of (is_valid, error_message)
@@ -455,27 +460,27 @@ TIPS:
         try:
             start_parts = [int(part) for part in custom_start_parts]
             end_parts = [int(part) for part in custom_end_parts]
-            orig_start = [int(x) for x in self.start_time]
-            orig_end = [int(x) for x in self.end_time]
+            orig_start = [int(x) for x in self.start_time[:5]]  # Only use year, month, day, hour, minute
+            orig_end = [int(x) for x in self.end_time[:5]]      # Only use year, month, day, hour, minute
         except ValueError:
             return False, "All time components must be valid integers"
         
         # Compare start timestamp to original start
-        for i in range(6):  # Check year, month, day, hour, minute, second
+        for i in range(5):  # Check year, month, day, hour, minute
             if start_parts[i] < orig_start[i]:
                 return False, "Start time cannot be earlier than the original data start time"
             elif start_parts[i] > orig_start[i]:
                 break  # If this component is greater, no need to check further components
         
         # Compare end timestamp to original end
-        for i in range(6):  # Check year, month, day, hour, minute, second
+        for i in range(5):  # Check year, month, day, hour, minute
             if end_parts[i] > orig_end[i]:
                 return False, "End time cannot be later than the original data end time"
             elif end_parts[i] < orig_end[i]:
                 break  # If this component is less, no need to check further components
         
         # Compare start to end timestamp
-        for i in range(6):  # Check year, month, day, hour, minute, second
+        for i in range(5):  # Check year, month, day, hour, minute
             if start_parts[i] > end_parts[i]:
                 return False, "Start time cannot be later than end time"
             elif start_parts[i] < end_parts[i]:
@@ -488,14 +493,13 @@ TIPS:
             messagebox.showwarning("Warning", "No data loaded. Please open a data file first.")
             return
     
-        # Get all components individually for validation
+        # Get all components individually for validation - no seconds
         custom_start_parts = [
             self.start_year_var.get().strip(),
             self.start_month_var.get().strip(),
             self.start_day_var.get().strip(),
             self.start_hour_var.get().strip(),
             self.start_minute_var.get().strip(),
-            self.start_second_var.get().strip()
         ]
         
         custom_end_parts = [
@@ -504,7 +508,6 @@ TIPS:
             self.end_day_var.get().strip(),
             self.end_hour_var.get().strip(),
             self.end_minute_var.get().strip(),
-            self.end_second_var.get().strip()
         ]
         
         # Ensure all fields are filled
@@ -518,9 +521,9 @@ TIPS:
             messagebox.showwarning("Invalid Time Range", error_message)
             return
         
-        # Format the time strings for processing
-        custom_start = " ".join(custom_start_parts)
-        custom_end = " ".join(custom_end_parts)
+        # Format the time strings for processing - add '00' seconds
+        custom_start = " ".join(custom_start_parts + ["00"])
+        custom_end = " ".join(custom_end_parts + ["00"])
         
         try:
             # Create and show progress dialog
