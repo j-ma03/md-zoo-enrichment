@@ -17,7 +17,7 @@ class IMUDataVisualizerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Enrichment Tracking Data Processor")
-        self.root.geometry("1920x1080")
+        self.root.geometry(f"{self.root.winfo_screenwidth()}x{self.root.winfo_screenheight()}")
         
         # Set default UI scale
         self.ui_scale = "normal"
@@ -56,8 +56,8 @@ class IMUDataVisualizerApp:
         self.file_label.pack(side=tk.LEFT, padx=5)
         
         # Add settings button to the top right corner
-        self.settings_button = tk.Button(self.top_container, text="⚙", font=("Arial", 12, "bold"), 
-                                     width=2, height=1, command=self.show_settings)
+        self.settings_button = tk.Button(self.top_container, text="Settings", font=("Arial", 12, "bold"), 
+                                     width=4, height=1, command=self.show_settings)
         self.settings_button.pack(side=tk.RIGHT, padx=5)
         
         # Add help button (i in a circle) to the top right corner
@@ -76,30 +76,104 @@ class IMUDataVisualizerApp:
         self.end_time_label = tk.Label(self.time_range_frame, text="End Time: Not available")
         self.end_time_label.pack(side=tk.LEFT, padx=5)
         
-        # Custom start time entry
+        # Custom start time section
         self.custom_start_label = tk.Label(self.time_range_frame, text="Custom Start:")
         self.custom_start_label.pack(side=tk.LEFT, padx=(20, 5))
         
-        self.custom_start_entry = tk.Entry(self.time_range_frame, width=20)
-        self.custom_start_entry.pack(side=tk.LEFT, padx=5)
+        # Create frame to hold the start time dropdowns
+        self.start_time_frame = tk.Frame(self.time_range_frame)
+        self.start_time_frame.pack(side=tk.LEFT, padx=5)
         
-        # Custom end time entry
+        # Create variables for start time dropdown values
+        self.start_year_var = tk.StringVar()
+        self.start_month_var = tk.StringVar()
+        self.start_day_var = tk.StringVar()
+        self.start_hour_var = tk.StringVar()
+        self.start_minute_var = tk.StringVar()
+        self.start_second_var = tk.StringVar()
+        
+        # Create dropdown menus for start time
+        self.start_year_dropdown = ttk.Combobox(self.start_time_frame, textvariable=self.start_year_var, width=5)
+        self.start_month_dropdown = ttk.Combobox(self.start_time_frame, textvariable=self.start_month_var, width=3)
+        self.start_day_dropdown = ttk.Combobox(self.start_time_frame, textvariable=self.start_day_var, width=3)
+        self.start_hour_dropdown = ttk.Combobox(self.start_time_frame, textvariable=self.start_hour_var, width=3)
+        self.start_minute_dropdown = ttk.Combobox(self.start_time_frame, textvariable=self.start_minute_var, width=3)
+        self.start_second_dropdown = ttk.Combobox(self.start_time_frame, textvariable=self.start_second_var, width=3)
+        
+        # Set up values for dropdowns
+        years = [str(year) for year in range(2000, 2031)]
+        months = [f"{month:02d}" for month in range(1, 13)]
+        days = [f"{day:02d}" for day in range(1, 32)]
+        hours = [f"{hour:02d}" for hour in range(24)]
+        minutes = [f"{minute:02d}" for minute in range(60)]
+        seconds = [f"{second:02d}" for second in range(60)]
+        
+        self.start_year_dropdown['values'] = years
+        self.start_month_dropdown['values'] = months
+        self.start_day_dropdown['values'] = days
+        self.start_hour_dropdown['values'] = hours
+        self.start_minute_dropdown['values'] = minutes
+        self.start_second_dropdown['values'] = seconds
+        
+        # Pack the start time dropdowns with labels
+        tk.Label(self.start_time_frame, text="Y:").pack(side=tk.LEFT)
+        self.start_year_dropdown.pack(side=tk.LEFT, padx=(0, 2))
+        tk.Label(self.start_time_frame, text="M:").pack(side=tk.LEFT)
+        self.start_month_dropdown.pack(side=tk.LEFT, padx=(0, 2))
+        tk.Label(self.start_time_frame, text="D:").pack(side=tk.LEFT)
+        self.start_day_dropdown.pack(side=tk.LEFT, padx=(0, 2))
+        tk.Label(self.start_time_frame, text="H:").pack(side=tk.LEFT)
+        self.start_hour_dropdown.pack(side=tk.LEFT, padx=(0, 2))
+        tk.Label(self.start_time_frame, text="M:").pack(side=tk.LEFT)
+        self.start_minute_dropdown.pack(side=tk.LEFT, padx=(0, 2))
+        tk.Label(self.start_time_frame, text="S:").pack(side=tk.LEFT)
+        self.start_second_dropdown.pack(side=tk.LEFT)
+        
+        # Custom end time section
         self.custom_end_label = tk.Label(self.time_range_frame, text="Custom End:")
         self.custom_end_label.pack(side=tk.LEFT, padx=(10, 5))
         
-        self.custom_end_entry = tk.Entry(self.time_range_frame, width=20)
-        self.custom_end_entry.pack(side=tk.LEFT, padx=5)
-
-        # Add hint text to the custom start and end time entries
-        self.custom_start_entry.insert(0, "YYYY MM DD HH MM SS")  # Placeholder for start time
-        self.custom_end_entry.insert(0, "YYYY MM DD HH MM SS")    # Placeholder for end time
+        # Create frame to hold the end time dropdowns
+        self.end_time_frame = tk.Frame(self.time_range_frame)
+        self.end_time_frame.pack(side=tk.LEFT, padx=5)
         
-        # Bind focus events to clear the placeholder text
-        self.custom_start_entry.bind("<FocusIn>", lambda event: self.clear_placeholder(event, "YYYY MM DD HH MM SS"))
-        self.custom_start_entry.bind("<FocusOut>", lambda event: self.restore_placeholder(event, "YYYY MM DD HH MM SS"))
+        # Create variables for end time dropdown values
+        self.end_year_var = tk.StringVar()
+        self.end_month_var = tk.StringVar()
+        self.end_day_var = tk.StringVar()
+        self.end_hour_var = tk.StringVar()
+        self.end_minute_var = tk.StringVar()
+        self.end_second_var = tk.StringVar()
         
-        self.custom_end_entry.bind("<FocusIn>", lambda event: self.clear_placeholder(event, "YYYY MM DD HH MM SS"))
-        self.custom_end_entry.bind("<FocusOut>", lambda event: self.restore_placeholder(event, "YYYY MM DD HH MM SS"))        
+        # Create dropdown menus for end time
+        self.end_year_dropdown = ttk.Combobox(self.end_time_frame, textvariable=self.end_year_var, width=5)
+        self.end_month_dropdown = ttk.Combobox(self.end_time_frame, textvariable=self.end_month_var, width=3)
+        self.end_day_dropdown = ttk.Combobox(self.end_time_frame, textvariable=self.end_day_var, width=3)
+        self.end_hour_dropdown = ttk.Combobox(self.end_time_frame, textvariable=self.end_hour_var, width=3)
+        self.end_minute_dropdown = ttk.Combobox(self.end_time_frame, textvariable=self.end_minute_var, width=3)
+        self.end_second_dropdown = ttk.Combobox(self.end_time_frame, textvariable=self.end_second_var, width=3)
+        
+        # Set up values for end time dropdowns (reusing the same values)
+        self.end_year_dropdown['values'] = years
+        self.end_month_dropdown['values'] = months
+        self.end_day_dropdown['values'] = days
+        self.end_hour_dropdown['values'] = hours
+        self.end_minute_dropdown['values'] = minutes
+        self.end_second_dropdown['values'] = seconds
+        
+        # Pack the end time dropdowns with labels
+        tk.Label(self.end_time_frame, text="Y:").pack(side=tk.LEFT)
+        self.end_year_dropdown.pack(side=tk.LEFT, padx=(0, 2))
+        tk.Label(self.end_time_frame, text="M:").pack(side=tk.LEFT)
+        self.end_month_dropdown.pack(side=tk.LEFT, padx=(0, 2))
+        tk.Label(self.end_time_frame, text="D:").pack(side=tk.LEFT)
+        self.end_day_dropdown.pack(side=tk.LEFT, padx=(0, 2))
+        tk.Label(self.end_time_frame, text="H:").pack(side=tk.LEFT)
+        self.end_hour_dropdown.pack(side=tk.LEFT, padx=(0, 2))
+        tk.Label(self.end_time_frame, text="M:").pack(side=tk.LEFT)
+        self.end_minute_dropdown.pack(side=tk.LEFT, padx=(0, 2))
+        tk.Label(self.end_time_frame, text="S:").pack(side=tk.LEFT)
+        self.end_second_dropdown.pack(side=tk.LEFT)
         
         # Update time range button
         self.update_range_button = tk.Button(self.time_range_frame, text="Update Time Range", 
@@ -134,7 +208,7 @@ class IMUDataVisualizerApp:
         self.save_processed_button.pack(side=tk.LEFT, padx=5)
         
         # Save raw data button
-        self.save_raw_button = tk.Button(self.action_frame, text="Save Raw Data as CSV", 
+        self.save_raw_button = tk.Button(self.action_frame, text="Save Raw Data as Spreadsheet", 
                                       command=self.save_raw_data, state=tk.DISABLED)
         self.save_raw_button.pack(side=tk.LEFT, padx=5)
         
@@ -194,7 +268,7 @@ class IMUDataVisualizerApp:
         save_frame.pack(fill=tk.X, padx=10, pady=10)
         
         auto_save_var = tk.BooleanVar(value=self.auto_save_raw)
-        tk.Checkbutton(save_frame, text="Auto-save raw data as CSV when loading", 
+        tk.Checkbutton(save_frame, text="Auto-save raw data as spreadsheet when loading", 
                       variable=auto_save_var).pack(anchor=tk.W, padx=10)
         
         # Save settings button
@@ -203,32 +277,6 @@ class IMUDataVisualizerApp:
             settings_window.destroy()
             
         tk.Button(settings_window, text="Save Settings", command=save_settings).pack(pady=10)
-        
-    def update_ui_scale(self):
-        # Update font sizes based on selected scale
-        font_dict = self.font_sizes[self.ui_scale]
-        
-        # Update buttons
-        button_font = ("Arial", font_dict["button"])
-        for widget in [self.open_button, self.process_button, self.save_processed_button, 
-                     self.save_raw_button, self.update_range_button]:
-            widget.config(font=button_font)
-        
-        # Update labels
-        label_font = ("Arial", font_dict["label"])
-        for widget in [self.file_label, self.start_time_label, self.end_time_label,
-                     self.custom_start_label, self.custom_end_label, self.threshold_label,
-                     self.view_label, self.status_bar]:
-            widget.config(font=label_font)
-        
-        # Update entries
-        entry_font = ("Arial", font_dict["entry"])
-        for widget in [self.custom_start_entry, self.custom_end_entry, self.threshold_entry]:
-            widget.config(font=entry_font)
-        
-        # Update radio buttons
-        for widget in [self.raw_radio, self.processed_radio]:
-            widget.config(font=label_font)
             
     def show_instructions(self):
         # Create a new window for instructions
@@ -259,7 +307,7 @@ Enrichment Tracking Data Processor - User Instructions
 This application helps you analyze and visualize data collected from the enrichment tracking device.
 
 Basic Steps:
-1. Open an IMU data file using the 'Open Raw Data File' button
+1. Open an raw data file using the 'Open Raw Data File' button
 2. View the raw data visualization
 3. Process the data using the 'Process Data' button
 4. Switch between raw and processed data views using the radio buttons
@@ -289,14 +337,14 @@ VISUALIZATION:
 - Processed data view shows minutes of interaction per hour
 
 SAVING DATA:
-- 'Save Raw Data' button exports the raw IMU data to CSV format
+- 'Save Raw Data' button exports the raw data as a spreadsheet
 - 'Save Processed Data' button exports the processed results
 - You will be prompted to select an output directory
 
 SETTINGS:
-- Click the ⚙ button to access settings
+- Click the 'Settings' button to access settings
 - You can change the UI scale between normal and large
-- Enable auto-save to automatically save raw data as CSV when loading
+- Enable auto-save to automatically save raw data as spreadsheet when loading
 
 TIPS:
 - You can resize the window to get a better view of the plots
@@ -377,40 +425,112 @@ TIPS:
             self.end_time_label.config(text=f"End Time: {int(self.end_time[0])}/{int(self.end_time[1]):02d}/"
                                              f"{int(self.end_time[2]):02d} {int(self.end_time[3]):02d}:{int(self.end_time[4]):02d}:{int(self.end_time[5]):02d}")
             
-            # Format the start and end times as "YYYY MM DD HH MM SS"
-            start_time_formatted = f"{int(self.start_time[0])} {int(self.start_time[1]):02d} {int(self.start_time[2]):02d} " \
-                                f"{int(self.start_time[3]):02d} {int(self.start_time[4]):02d} {int(self.start_time[5]):02d}"
-            end_time_formatted = f"{int(self.end_time[0])} {int(self.end_time[1]):02d} {int(self.end_time[2]):02d} " \
-                                f"{int(self.end_time[3]):02d} {int(self.end_time[4]):02d} {int(self.end_time[5]):02d}"        
-
-            # Pre-fill the custom entries with current values
-            self.custom_start_entry.delete(0, tk.END)
-            self.custom_start_entry.insert(0, start_time_formatted)
+            # Set initial values for the dropdown menus
+            self.start_year_var.set(str(int(self.start_time[0])))
+            self.start_month_var.set(f"{int(self.start_time[1]):02d}")
+            self.start_day_var.set(f"{int(self.start_time[2]):02d}")
+            self.start_hour_var.set(f"{int(self.start_time[3]):02d}")
+            self.start_minute_var.set(f"{int(self.start_time[4]):02d}")
+            self.start_second_var.set(f"{int(self.start_time[5]):02d}")
             
-            self.custom_end_entry.delete(0, tk.END)
-            self.custom_end_entry.insert(0, end_time_formatted)
+            self.end_year_var.set(str(int(self.end_time[0])))
+            self.end_month_var.set(f"{int(self.end_time[1]):02d}")
+            self.end_day_var.set(f"{int(self.end_time[2]):02d}")
+            self.end_hour_var.set(f"{int(self.end_time[3]):02d}")
+            self.end_minute_var.set(f"{int(self.end_time[4]):02d}")
+            self.end_second_var.set(f"{int(self.end_time[5]):02d}")
     
+    def validate_time_range(self, custom_start_parts, custom_end_parts):
+        """
+        Validate that the custom time range is within the original data bounds.
+        
+        Args:
+            custom_start_parts: List of start time components [year, month, day, hour, min, sec]
+            custom_end_parts: List of end time components [year, month, day, hour, min, sec]
+            
+        Returns:
+            Tuple of (is_valid, error_message)
+        """
+        # Convert all parts to integers
+        try:
+            start_parts = [int(part) for part in custom_start_parts]
+            end_parts = [int(part) for part in custom_end_parts]
+            orig_start = [int(x) for x in self.start_time]
+            orig_end = [int(x) for x in self.end_time]
+        except ValueError:
+            return False, "All time components must be valid integers"
+        
+        # Compare start timestamp to original start
+        for i in range(6):  # Check year, month, day, hour, minute, second
+            if start_parts[i] < orig_start[i]:
+                return False, "Start time cannot be earlier than the original data start time"
+            elif start_parts[i] > orig_start[i]:
+                break  # If this component is greater, no need to check further components
+        
+        # Compare end timestamp to original end
+        for i in range(6):  # Check year, month, day, hour, minute, second
+            if end_parts[i] > orig_end[i]:
+                return False, "End time cannot be later than the original data end time"
+            elif end_parts[i] < orig_end[i]:
+                break  # If this component is less, no need to check further components
+        
+        # Compare start to end timestamp
+        for i in range(6):  # Check year, month, day, hour, minute, second
+            if start_parts[i] > end_parts[i]:
+                return False, "Start time cannot be later than end time"
+            elif start_parts[i] < end_parts[i]:
+                break  # If this component is less, no need to check further components
+        
+        return True, ""
+
     def update_time_range(self):
         if self.zoodata_dl is None:
             messagebox.showwarning("Warning", "No data loaded. Please open a data file first.")
             return
-
-        custom_start = self.custom_start_entry.get().strip()
-        custom_end = self.custom_end_entry.get().strip()
-
-        if not custom_start or not custom_end:
-            messagebox.showwarning("Warning", "Please enter both start and end times.")
+    
+        # Get all components individually for validation
+        custom_start_parts = [
+            self.start_year_var.get().strip(),
+            self.start_month_var.get().strip(),
+            self.start_day_var.get().strip(),
+            self.start_hour_var.get().strip(),
+            self.start_minute_var.get().strip(),
+            self.start_second_var.get().strip()
+        ]
+        
+        custom_end_parts = [
+            self.end_year_var.get().strip(),
+            self.end_month_var.get().strip(),
+            self.end_day_var.get().strip(),
+            self.end_hour_var.get().strip(),
+            self.end_minute_var.get().strip(),
+            self.end_second_var.get().strip()
+        ]
+        
+        # Ensure all fields are filled
+        if any(not part for part in custom_start_parts + custom_end_parts):
+            messagebox.showwarning("Warning", "Please enter both start and end times completely.")
             return
-
+        
+        # Validate time range
+        valid, error_message = self.validate_time_range(custom_start_parts, custom_end_parts)
+        if not valid:
+            messagebox.showwarning("Invalid Time Range", error_message)
+            return
+        
+        # Format the time strings for processing
+        custom_start = " ".join(custom_start_parts)
+        custom_end = " ".join(custom_end_parts)
+        
         try:
             # Create and show progress dialog
             self.create_progress_dialog("Updating Time Range", "Updating time range, please wait...")
-
+    
             # Start the time range update in a separate thread
             threading.Thread(target=lambda: self.update_time_range_thread(custom_start, custom_end), daemon=True).start()
-
+    
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to update time range. Time should be in format YYYY MM DD HH MM SS.")
+            messagebox.showerror("Error", f"Failed to update time range: {str(e)}")
             self.status_var.set("Error updating time range")
     
     def update_time_range_thread(self, custom_start, custom_end):
